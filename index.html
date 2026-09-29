@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Banco de problemas por eixo · 2º Ideathon São Borja 2026</title>
+<style>
+:root {
+  box-sizing: border-box;
+  padding-top: env(safe-area-inset-top, 0px);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+  --bg: #F2F5F1;
+  --surface: #FFFFFF;
+  --ink: #15241F;
+  --muted: #55645E;
+  --line: #D3DBD4;
+  --river: #1E5F63;
+  --wheat: #B98512;
+  --e1: #2F6B8A;
+  --e2: #4A7D2A;
+  --e3: #86529A;
+  --e4: #B0463A;
+  --e5: #5E6B78;
+  --tag-p-bg: #E3ECE7;
+  --tag-e-bg: #E2E8F4;
+  --tag-v-bg: #F5EBCF;
+ 
+  --focus: #1E5F63;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #101816; --surface: #17221F; --ink: #E6EEEA; --muted: #9DB0A8; --line: #2C3B36;
+    --river: #6FC0C4; --wheat: #E2B44A;
+    --e1: #7DB6D6; --e2: #8FCB6A; --e3: #C594D9; --e4: #E88B7E; --e5: #A9BAC8;
+    --tag-p-bg: #223029; --tag-e-bg: #1F2A3D; --tag-v-bg: #3A3115;
+    --focus: #6FC0C4;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #101816; --surface: #17221F; --ink: #E6EEEA; --muted: #9DB0A8; --line: #2C3B36;
+  --river: #6FC0C4; --wheat: #E2B44A;
+  --e1: #7DB6D6; --e2: #8FCB6A; --e3: #C594D9; --e4: #E88B7E; --e5: #A9BAC8;
+  --tag-p-bg: #223029; --tag-e-bg: #1F2A3D; --tag-v-bg: #3A3115;
+  --focus: #6FC0C4;
+}
+html { scroll-padding-top: calc(env(safe-area-inset-top, 0px) + 64px); scroll-behavior: smooth; }
+*, *::before, *::after { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--ink); font-family: "Segoe UI", system-ui, -apple-system, Roboto, "Helvetica Neue", Arial, sans-serif; font-size: 16px; line-height: 1.55; }
+a { color: var(--river); text-underline-offset: 2px; }
+:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; border-radius: 4px; }
+.wrap { max-width: 1120px; margin: 0 auto; padding: 0 20px; }
+
+header.top { padding: 44px 0 26px; border-bottom: 1px solid var(--line); }
+.kicker { margin: 0 0 10px; color: var(--muted); font-size: 0.95rem; }
+h1 { font-family: "Trebuchet MS", "Segoe UI", system-ui, -apple-system, sans-serif; font-weight: 700; font-size: clamp(2rem, 5.2vw, 3.4rem); line-height: 1.05; letter-spacing: -0.02em; margin: 0 0 16px; max-width: 18ch; }
+.lede { max-width: 66ch; margin: 0; color: var(--muted); }
+.lede strong { color: var(--ink); font-weight: 600; }
+
+.controls { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; background: var(--bg); border-bottom: 1px solid var(--line); padding: 12px 0; }
+.controls .wrap { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.chip { font: inherit; font-size: 0.9rem; font-weight: 500; padding: 7px 13px; border-radius: 999px; border: 1.5px solid var(--line); background: var(--surface); color: var(--ink); cursor: pointer; }
+.chip[aria-pressed="true"] { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+.chip .sw { display: inline-block; width: 9px; height: 9px; border-radius: 50%; margin-right: 7px; }
+.count { margin-left: auto; color: var(--muted); font-size: 0.9rem; }
+
+.legend { display: flex; flex-wrap: wrap; gap: 8px 18px; margin: 26px 0 4px; font-size: 0.9rem; color: var(--muted); }
+.legend span { display: inline-flex; align-items: center; gap: 8px; }
+
+section.group { margin: 40px 0 10px; --rail: var(--line); }
+section.group[data-eixo="1"] { --rail: var(--e1); }
+section.group[data-eixo="2"] { --rail: var(--e2); }
+section.group[data-eixo="3"] { --rail: var(--e3); }
+section.group[data-eixo="4"] { --rail: var(--e4); }
+section.group[data-eixo="5"] { --rail: var(--e5); }
+section.group > h2 { font-family: "Trebuchet MS", "Segoe UI", system-ui, -apple-system, sans-serif; font-size: clamp(1.35rem, 3vw, 1.85rem); letter-spacing: -0.01em; line-height: 1.2; margin: 0 0 6px; border-left: 6px solid var(--rail); padding-left: 12px; }
+section.group > h2 small { display: block; font-family: "Segoe UI", system-ui, -apple-system, Roboto, Arial, sans-serif; font-size: 0.9rem; font-weight: 500; letter-spacing: 0; color: var(--rail); margin-bottom: 2px; }
+section.group > p { margin: 0 0 14px; color: var(--muted); max-width: 72ch; font-size: 0.95rem; }
+
+.table-scroll { background: var(--surface); border: 1px solid var(--line); border-top: 3px solid var(--rail); border-radius: 10px; overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; min-width: 780px; }
+caption { text-align: left; padding: 0; height: 0; overflow: hidden; }
+th, td { text-align: left; vertical-align: top; padding: 14px 16px; border-bottom: 1px solid var(--line); }
+thead th { font-size: 0.85rem; font-weight: 600; color: var(--muted); background: var(--bg); }
+tbody tr:last-child td { border-bottom: 0; }
+td.num { width: 56px; font-family: "Trebuchet MS", "Segoe UI", system-ui, sans-serif; font-weight: 700; font-size: 1.25rem; color: var(--rail); }
+td.prob { width: 31%; font-weight: 500; }
+td.ev { width: 40%; font-size: 0.95rem; }
+td.ev p { margin: 0 0 8px; }
+td.ev p:last-child { margin-bottom: 0; }
+td.quem { font-size: 0.92rem; color: var(--muted); }
+
+.tag { display: inline-block; font-size: 0.75rem; font-weight: 600; line-height: 1; padding: 4px 8px; border-radius: 5px; margin-right: 6px; vertical-align: 1px; border: 1px solid var(--line); }
+.tag.p { background: var(--tag-p-bg); }
+.tag.e { background: var(--tag-e-bg); }
+.tag.v { background: var(--tag-v-bg); border-color: var(--wheat); }
+
+tr.hidden { display: none; }
+section.group.empty { display: none; }
+
+footer { margin: 44px 0 60px; padding-top: 22px; border-top: 1px solid var(--line); font-size: 0.92rem; color: var(--muted); }
+footer h2 { font-family: "Trebuchet MS", "Segoe UI", system-ui, sans-serif; font-size: 1.15rem; color: var(--ink); margin: 0 0 8px; }
+footer ul { margin: 0 0 18px; padding-left: 20px; }
+footer li { margin-bottom: 4px; }
+
+@media (max-width: 860px) {
+  .wrap { padding: 0 16px; }
+  .table-scroll { overflow: visible; border: 0; background: transparent; }
+  table, tbody, tr, td { display: block; min-width: 0; width: 100%; }
+  thead { display: none; }
+  tbody tr { background: var(--surface); border: 1px solid var(--line); border-left: 5px solid var(--rail); border-radius: 10px; margin-bottom: 12px; padding: 6px 0; }
+  td { border-bottom: 0; padding: 8px 16px; }
+  td.num, td.prob, td.ev, td.quem { width: 100%; }
+  td[data-label]::before { content: attr(data-label); display: block; font-size: 0.78rem; font-weight: 600; color: var(--muted); margin-bottom: 2px; }
+  td.num { padding-bottom: 0; }
+  .count { margin-left: 0; width: 100%; }
+}
+@media print {
+  .controls { display: none; }
+  body { background: #fff; color: #000; }
+  .table-scroll { overflow: visible; }
+  table { min-width: 0; }
+}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap">
+    <p class="kicker">2º Ideathon São Borja 2026 · Maratona de ideias, 19 de outubro</p>
+    <h1>Banco de problemas por eixo</h1>
+    <p class="lede">26 problemas levantados na consulta da <strong>Agenda 2040</strong>, organizados pelos <strong>5 eixos</strong> do evento, escritos de forma mais clara e com a evidência que sustenta cada um. Só entram problemas que podem virar empresa ou startup: há um público que sofre com eles e alguém que poderia pagar por uma solução. Nenhuma solução é sugerida aqui, porque essa parte é da equipe.</p>
+  </div>
+</header>
+
+<nav class="controls" aria-label="Filtros">
+  <div class="wrap">
+    <button class="chip" type="button" data-filter="todos" aria-pressed="true">Todos</button>
+    <button class="chip" type="button" data-filter="1" aria-pressed="false"><span class="sw" style="background:var(--e1)"></span>Eixo 1</button>
+    <button class="chip" type="button" data-filter="2" aria-pressed="false"><span class="sw" style="background:var(--e2)"></span>Eixo 2</button>
+    <button class="chip" type="button" data-filter="3" aria-pressed="false"><span class="sw" style="background:var(--e3)"></span>Eixo 3</button>
+    <button class="chip" type="button" data-filter="4" aria-pressed="false"><span class="sw" style="background:var(--e4)"></span>Eixo 4</button>
+    <button class="chip" type="button" data-filter="5" aria-pressed="false"><span class="sw" style="background:var(--e5)"></span>Eixo 5</button>
+    <span class="count" id="count" role="status" aria-live="polite"></span>
+  </div>
+</nav>
+
+<main class="wrap">
+
+  <div class="legend" aria-label="Legenda">
+    <span><span class="tag p">Planilha</span> Resposta da consulta Agenda 2040</span>
+    <span><span class="tag e">Fonte externa</span> Dado público, com link no rodapé</span>
+    <span><span class="tag v">A validar</span> Hipótese que a equipe precisa checar em campo</span>
+  </div>
+
+  <!-- ============ EIXO 1 ============ -->
+  <section class="group" data-eixo="1" id="eixo-1">
+    <h2><small>Eixo 1 · 6 problemas</small>Desenvolvimento econômico, governança, transparência e inovação</h2>
+    <p>Emprego, renda, turismo e inovação.</p>
+    <div class="table-scroll">
+      <table>
+        <caption>Problemas do eixo 1</caption>
+        <thead><tr><th>Nº</th><th>Problema</th><th>Evidência</th><th>Quem é afetado</th></tr></thead>
+        <tbody>
+
+<tr data-eixo="1" data-tema="geral">
+  <td class="num">1</td>
+  <td class="prob" data-label="Problema">Ideias, projetos e talentos locais não chegam a virar negócios ou soluções aplicadas, porque São Borja não tem um ecossistema de inovação estruturado. Jovens qualificados deixam a cidade.</td>
+  <td class="ev" data-label="Evidência"><p><span class="tag p">Planilha</span>Muitos projetos desenvolvidos em instituições de ensino não evoluem para negócios ou soluções aplicadas.</p></td>
+  <td class="quem" data-label="Quem é afetado">Estudantes, empreendedores, instituições de ensino, empresas locais e jovens que saem da cidade.</td>
+</tr>
+
+<tr data-eixo="1" data-tema="geral">
+  <td class="num">2</td>
+  <td class="prob" data-label="Problema">O turismo é pouco explorado e pouco estruturado, apesar dos atrativos históricos, culturais e naturais (Missões, dois presidentes, orla do Rio Uruguai, pesca).</td>
+  <td class="ev" data-label="Evidência"><p><span class="tag p">Planilha</span>Há atrativos, mas falta oferta organizada e fomento.</p></td>
+  <td class="quem" data-label="Quem é afetado">Comércio, restaurantes, guias e pequenos empreendedores.</td>
+</tr>
+
+<tr data-eixo="1" data-tema="geral">
+  <td class="num">3</td>
+  <td class="prob" data-label="Problema">Moradores da periferia (ex.: bairro Passo) têm dificuldade de acesso a emprego de qualidade por falta de qualificação e de conexão com o mercado. As empresas, por sua vez, não encontram mão de obra qualificada.</td>
+  <td class="ev" data-label="Evidência"><p><span class="tag p">Planilha</span>Desigualdade entre centro e periferia, com poucas oportunidades de inserção no mercado.</p></td>
+  <td class="quem" data-label="Quem é afetado">Moradores em vulnerabilidade e empresas locais.</td>
+</tr>
+
+<tr data-eixo="1" data-tema="geral">
+  <td class="num">10</td>
+  <td class="prob" data-label="Problema">O comércio e os serviços locais têm pouca demanda, e a economia gira quase só em torno do setor primário.</td>
+  <td class="ev" data-label="Evidência"><p><span class="tag p">Planilha</span>Baixa dinâmica econômica fora do setor primário e empresários de serviços com pouca demanda.</p></td>
+  <td class="quem" data-label="Quem é afetado">Comerciantes, prestadores de serviço e desempregados.</td>
+</tr>
+
+<tr data-eixo="1" data-tema="geral">
+  <td class="num">11</td>
+  <td class="prob" data-label="Problema">Jovens deixam São Borja por falta de oportunidades de carreira, de renda e de atratividade da cidade.</td>
+  <td class="ev" data-label="Evidência"><p><span class="tag p">Planilha</span>Jovens que saem da cidade e dificuldade de fidelizar mão de obra jovem e qualificada.</p></td>
+  <td class="quem" data-label="Quem é afetado">Jovens, famílias, empresas e instituições de ensino.</td>
+</tr>
+
+<tr data-eixo="1" data-tema="geral">
+  <td class="num">12</td>
+  <td class="prob" data-label="Problema">A orla do Rio Uruguai é pouco aproveitada economicamente para pesca esportiva, lazer aquático, camping e hospedagem.</td>
+  <td class="ev" data-label="Evidência"><p><span class="tag p">Planilha</span>Uma resposta aponta o potencial de virar referência em pesca e lazer aquático, mas hoje faltam empreendimentos e fomento.</p></td>
+  <td class="quem" data-label="Quem é afetado">Pescadores, pequenos empreendedores, guias e a comunidade em geral.</td>
+</tr>
+
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ============ EIXO 2 ============ -->
+  <section class="group" data-eixo="2" id="eixo-2">
+    <h2><small>Eixo 2 · 9 problemas</small>Sustentabilidade ambiental e rural</h2>
+    <p>Inclui os problemas de agricultura familiar e diversificação de culturas (9 e 16 a 22). A planilha citava 35% de compras da agricultura familiar; desde 1º de janeiro de 2026 o mínimo legal no PNAE é <strong>45%</strong>.</p>
+    <div class="table-scroll">
+      <table>
+        <caption>Problemas do eixo 2</caption>
+        <thead><tr><th>Nº</th><th>Problema</th><th>Evidência</th><th>Quem é afetado</th></tr></thead>
+        <tbody>
+
+<tr data-eixo="2" data-tema="agri">
+  <td class="num">9</td>
+  <td class="prob" data-label="Problema">Escolas e instituições públicas têm dificuldade de comprar da agricultura familiar local, e os produtores não conseguem escoar sua produção de forma organizada.</td>
+  <td class="ev" data-label="Evidência">
+    <p><span class="tag p">Planilha</span>Instituições e escolas lotadas em São Borja não conseguem suprir a demanda por alimentos da agricultura familiar. A resposta cita 35%.</p>
+    <p><span class="tag e">Fonte externa</span>Desde 01/01/2026 o mínimo do PNAE para compras da agricultura familiar subiu de 30% para 45% (Lei nº 15.226/2025).</p>
+  </td>
+  <td class="quem" data-label="Quem é afetado">Agricultores familiares, escolas e instituições públicas.</td>
+</tr>
+
+<tr data-eixo="2" data-tema="agri">
+  <td class="num">16</td>
+  <td class="prob" data-label="Problema">Agricultores familiares têm dificuldade de cumprir as exigências para vender ao poder público (cadastro, nota fiscal, normas sanitárias e documentação das chamadas públicas) e ficam fora do mercado institucional.</td>
+  <td class="ev" data-label="Evidência">
+    <p><span class="tag e">Fonte externa</span>Em 2022, 1.586 municípios não atingiram o mínimo de 30% de compras da agricultura familiar no PNAE, com entraves como emissão de notas fiscais, logística e normas higiênico-sanitárias.</p>
+    <p><span class="tag e">Fonte externa</span>As chamadas públicas do PNAE exigem CAF (Cadastro Nacional da Agricultura Familiar) ativo. Um estudo do Ipea associa o acesso às compras públicas a aumento de renda de até 106% para agricultores.</p>
+    <p><span class="tag v">A validar</span>Quantos produtores de São Borja têm CAF e quantos já venderam ao PNAE?</p>
+  </td>
+  <td class="quem" data-label="Quem é afetado">Agricultores familiares, cooperativas e associações, secretaria de educação.</td>
+</tr>
+
+<tr data-eixo="2" data-tema="agri">
+  <td class="num">17</td>
+  <td class="prob" data-label="Problema">A economia rural do município depende de poucas atividades do setor primário, o que expõe os produtores a oscilações de preço e de clima e limita a variedade de alimentos produzidos localmente.</td>
+  <td class="ev" data-label="Evidência">
+    <p><span class="tag p">Planilha</span>Respostas apontam baixa dinâmica econômica fora do setor primário e desejo de reduzir a dependência dele.</p>
+    <p><span class="tag v">A validar</span>Qual a participação de cada cultura e da pecuária no valor da produção local? Conferir dados de produção agrícola do IBGE e da Emater.</p>
+  </td>
+  <td class="quem" data-label="Quem é afetado">Produtores rurais, comércio dependente do campo, economia municipal.</td>
+</tr>
+
+<tr data-eixo="2" data-tema="agri">
+  <td class="num">18</td>
+  <td class="prob" data-label="Problema">Escolas e instituições não encontram, dentro do próprio município, oferta regular e variada de hortifrúti e outros alimentos frescos, e parte do que consomem vem de fora.</td>
+  <td class="ev" data-label="Evidência">
+    <p><span class="tag p">Planilha</span>A resposta fala em enorme demanda das instituições por produtos da agricultura familiar, ainda não atendida.</p>
+    <p><span class="tag v">A validar</span>Entrevistar nutricionistas da merenda escolar: quais itens faltam, com que frequência e de onde vêm hoje?</p>
+  </td>
+  <td class="quem" data-label="Quem é afetado">Estudantes, escolas, nutricionistas, produtores locais.</td>
+</tr>
+
+<tr data-eixo="2" data-tema="agri">
+  <td class="num">19</td>
+  <td class="prob" data-label="Problema">Pequenos produtores não têm canais estáveis para vender sua produção e dependem de intermediários ou de vendas ocasionais.</td>
+  <td class="ev" data-label="Evidência">
+    <p><span class="tag p">Planilha</span>Uma resposta propõe um centro de distribuição para organizar a demanda existente. Outra registra o Mercado Público com uso precário e baixa adesão da comunidade.</p>
+    <p><span class="tag v">A validar</span>Quanto os produtores recebem em relação ao preço final ao consumidor? Quem compra hoje e com que regularidade?</p>
+  </td>
+  <td class="quem" data-label="Quem é afetado">Pequenos produtores, feirantes, consumidores locais.</td>
+</tr>
+
+<tr data-eixo="2" data-tema="agri">
+  <td class="num">20</td>
+  <td class="prob" data-label="Problema">Muitos produtores vendem a produção sem beneficiamento e deixam de capturar o valor agregado (processamento, embalagem, marca), por falta de estrutura e de conhecimento das exigências sanitárias.</td>
+  <td class="ev" data-label="Evidência">
+    <p><span class="tag p">Planilha</span>Respostas apontam baixo número de indústrias e economia concentrada no setor primário.</p>
+    <p><span class="tag v">A validar</span>Existem agroindústrias familiares registradas no município? Quais barreiras os produtores citam para beneficiar (licença sanitária, equipamentos, capital)?</p>
+  </td>
+  <td class="quem" data-label="Quem é afetado">Agricultores familiares, cooperativas, potenciais empreendedores da agroindústria.</td>
+</tr>
+
+<tr data-eixo="2" data-tema="agri">
+  <td class="num">21</td>
+  <td class="prob" data-label="Problema">Agricultores familiares ficam expostos a enchentes e estiagens sem informação, proteção financeira ou orientação técnica para diversificar o que plantam.</td>
+  <td class="ev" data-label="Evidência">
+    <p><span class="tag p">Planilha</span>Agricultores aparecem entre os afetados por enchentes e estiagens, e as respostas aos eventos são emergenciais e de curto prazo. A Emater é citada como ator necessário.</p>
+    <p><span class="tag v">A validar</span>Quantos produtores perderam safra nos últimos eventos climáticos e quantos tinham seguro ou assistência técnica?</p>
+  </td>
+  <td class="quem" data-label="Quem é afetado">Agricultores familiares, comunidades ribeirinhas, cooperativas.</td>
+</tr>
+
+<tr data-eixo="2" data-tema="agri">
+  <td class="num">22</td>
+  <td class="prob" data-label="Problema">Jovens das famílias rurais não veem futuro na propriedade e deixam o campo, o que ameaça a continuidade da agricultura familiar.</td>
+  <td class="ev" data-label="Evidência">
+    <p><span class="tag p">Planilha</span>Uma resposta cita jovens que deixam a cidade por falta de oportunidades. A visão de futuro de outra é a permanência da agricultura familiar no campo.</p>
+    <p><span class="tag e">Fonte externa</span>No RS, 80,5% dos estabelecimentos agropecuários são de agricultura familiar (Censo Agropecuário 2017).</p>
+    <p><span class="tag v">A validar</span>Idade média dos produtores locais e intenção de sucessão entre os filhos.</p>
+  </td>
+  <td class="quem" data-label="Quem é afetado">Famílias rurais, jovens do campo, comunidades do interior.</td>
+</tr>
+
+<tr data-eixo="2" data-tema="geral">
+  <td class="num">14</td>
+  <td class="prob" data-label="Problema">A gestão da água e a contaminação ambiental não são tratadas de forma preventiva, com pouco reaproveitamento de recursos hídricos.</td>
+  <td class="ev" data-label="Evidência">
+    <p><span class="tag p">Planilha</span>Uma resposta cita a necessidade de melhorar as condições hídricas, reutilizar a água e reduzir a contaminação.</p>
+    <p><span class="tag v">A validar</span>Evidência fraca: a equipe precisará levantar dados locais.</p>
+  </td>
+  <td class="quem" data-label="Quem é afetado">População em geral, meio ambiente e construção civil.</td>
+</tr>
+
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ============ EIXO 3 ============ -->
+  <section class="group" data-eixo="3" id="eixo-3">
+    <h2><small>Eixo 3 · 4 problemas</small>Educação, cultura, participação cidadã e identidade local</h2>
+    <p>Formação para o trabalho, identidade gastronômica, cultura e inclusão escolar.</p>
+    <div class="table-scroll">
+      <table>
+        <caption>Problemas do eixo 3</caption>
+        <thead><tr><th>Nº</th><th>Problema</th><th>Evidência</th><th>Quem é afetado</th></tr></thead>
+        <tbody>
+
+<tr data-eixo="3" data-tema="geral">
+  <td class="num">4</td>
+  <td class="prob" data-label="Problema">A educação está desalinhada do mundo do trabalho: mesmo pessoas com formação superior têm dificuldade de colocação, e há pouca educação empreendedora nas escolas.</td>
+  <td class="ev" data-label="Evidência"><p><span class="tag p">Planilha</span>Dificuldade de colocação no mercado mesmo com qualificação.</p></td>
+  <td class="quem" data-label="Quem é afetado">Estudantes, jovens, escolas e o município, que perde mão de obra qualificada.</td>
+</tr>
+
+<tr data-eixo="3" data-tema="geral">
+  <td class="num">5</td>
+  <td class="prob" data-label="Problema">A gastronomia local não tem identidade reconhecida, e o Mercado Público é subutilizado pela comunidade.</td>
+  <td class="ev" data-label="Evidência"><p><span class="tag p">Planilha</span>Outras cidades se apropriam de festivais e produtos típicos, e o Mercado tem uso precário e baixa visitação.</p></td>
+  <td class="quem" data-label="Quem é afetado">CTGs, restaurantes, comércio, produtores e a comunidade.</td>
+</tr>
+
+<tr data-eixo="3" data-tema="geral">
+  <td class="num">6</td>
+  <td class="prob" data-label="Problema">Não há espaço público nem agenda regular para projetos artísticos e culturais, o que limita a atividade econômica e a permanência dos jovens.</td>
+  <td class="ev" data-label="Evidência"><p><span class="tag p">Planilha</span>Ausência de calendário de eventos e de ambiente próprio.</p></td>
+  <td class="quem" data-label="Quem é afetado">Artistas, produtores culturais e jovens.</td>
+</tr>
+
+<tr data-eixo="3" data-tema="geral">
+  <td class="num">7</td>
+  <td class="prob" data-label="Problema">Escolas têm dificuldade de incluir e acompanhar estudantes neurodivergentes: profissionais sobrecarregados e sem formação específica, com evasão e exclusão social.</td>
+  <td class="ev" data-label="Evidência"><p><span class="tag p">Planilha</span>Evasão escolar, sobrecarga de profissionais e ausência de políticas específicas.</p></td>
+  <td class="quem" data-label="Quem é afetado">Crianças e jovens neurodivergentes, famílias, professores e profissionais de saúde.</td>
+</tr>
+
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ============ EIXO 4 ============ -->
+  <section class="group" data-eixo="4" id="eixo-4">
+    <h2><small>Eixo 4 · 3 problemas</small>Saúde, assistência social e inclusão</h2>
+    <p>Acesso a serviços de saúde e vulnerabilidade a eventos climáticos. É o eixo com menos respostas na planilha.</p>
+    <div class="table-scroll">
+      <table>
+        <caption>Problemas do eixo 4</caption>
+        <thead><tr><th>Nº</th><th>Problema</th><th>Evidência</th><th>Quem é afetado</th></tr></thead>
+        <tbody>
+
+<tr data-eixo="4" data-tema="geral">
+  <td class="num">8</td>
+  <td class="prob" data-label="Problema">O acesso a consultas e exames é lento e ineficiente, com dificuldade de agendamento, falta de profissionais e filas.</td>
+  <td class="ev" data-label="Evidência"><p><span class="tag p">Planilha</span>Filas de atendimento e dificuldade para agendar consultas e exames.</p></td>
+  <td class="quem" data-label="Quem é afetado">População usuária dos serviços públicos de saúde.</td>
+</tr>
+
+<tr data-eixo="4" data-tema="geral">
+  <td class="num">13</td>
+  <td class="prob" data-label="Problema">Faltam profissionais de saúde e eles não permanecem no município, o que agrava a demora no atendimento.</td>
+  <td class="ev" data-label="Evidência"><p><span class="tag p">Planilha</span>Falta de profissionais, filas e necessidade de concursos e de permanência de profissionais.</p></td>
+  <td class="quem" data-label="Quem é afetado">Usuários do sistema de saúde e os próprios profissionais.</td>
+</tr>
+
+<tr data-eixo="4" data-tema="geral">
+  <td class="num">15</td>
+  <td class="prob" data-label="Problema">Comunidades ribeirinhas, agricultores e periferias ficam vulneráveis a enchentes e estiagens, e as respostas são improvisadas e de curto prazo.</td>
+  <td class="ev" data-label="Evidência">
+    <p><span class="tag p">Planilha</span>Ações emergenciais após cada evento, sem planejamento adequado, e falta de moradias adequadas.</p>
+    <p><span class="tag v">A validar</span>O comprador provável é o poder público: a equipe precisará achar um cliente privado.</p>
+  </td>
+  <td class="quem" data-label="Quem é afetado">Ribeirinhos, agricultores, periferias urbanas, comércio e turismo.</td>
+</tr>
+
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ============ EIXO 5 ============ -->
+  <section class="group" data-eixo="5" id="eixo-5">
+    <h2><small>Eixo 5 · 4 problemas</small>Infraestrutura, mobilidade e urbanismo</h2>
+    <p>Problemas novos (23 a 26), todos vindos da planilha. Como o comprador natural costuma ser a prefeitura, cada equipe precisa identificar também um cliente privado ou um modelo de receita para pontuar em mercado e modelo de negócio.</p>
+    <div class="table-scroll">
+      <table>
+        <caption>Problemas do eixo 5</caption>
+        <thead><tr><th>Nº</th><th>Problema</th><th>Evidência</th><th>Quem é afetado</th></tr></thead>
+        <tbody>
+
+<tr data-eixo="5" data-tema="geral">
+  <td class="num">23</td>
+  <td class="prob" data-label="Problema">A área urbana tem baixo índice de arborização, o que reduz o conforto térmico e a qualidade de vida.</td>
+  <td class="ev" data-label="Evidência">
+    <p><span class="tag p">Planilha</span>Ruas centrais sem uma única árvore e menção à diminuição da fauna urbana, como pássaros.</p>
+    <p><span class="tag v">A validar</span>Percentual de arborização urbana e mapa das ruas sem cobertura vegetal.</p>
+  </td>
+  <td class="quem" data-label="Quem é afetado">Toda a população, principalmente quem circula a pé, e o meio ambiente.</td>
+</tr>
+
+<tr data-eixo="5" data-tema="geral">
+  <td class="num">24</td>
+  <td class="prob" data-label="Problema">Não há padronização das espécies de árvores plantadas em calçadas e passeios públicos, e espécies inadequadas danificam calçadas e rede elétrica.</td>
+  <td class="ev" data-label="Evidência">
+    <p><span class="tag p">Planilha</span>Calçadas destruídas pelas raízes, problemas na rede elétrica, poluição visual e árvores de espécies inadequadas.</p>
+    <p><span class="tag v">A validar</span>Custo anual de reparos de calçadas e de podas na rede elétrica.</p>
+  </td>
+  <td class="quem" data-label="Quem é afetado">Toda a população que circula pelas vias, concessionária de energia e prefeitura.</td>
+</tr>
+
+<tr data-eixo="5" data-tema="geral">
+  <td class="num">25</td>
+  <td class="prob" data-label="Problema">A manutenção das ruas é lenta: buracos, barro e poeira persistem porque a demanda supera a capacidade de atendimento da prefeitura.</td>
+  <td class="ev" data-label="Evidência">
+    <p><span class="tag p">Planilha</span>Uma resposta aponta limitações de infraestrutura, recursos financeiros e pessoal, que impedem atender a demanda a tempo. Outra relata barro, buracos e poeira em uma rua de bairro.</p>
+    <p><span class="tag v">A validar</span>Volume de solicitações registradas versus atendidas e tempo médio de resposta.</p>
+  </td>
+  <td class="quem" data-label="Quem é afetado">Toda a população, empresários, trabalhadores e alunos.</td>
+</tr>
+
+<tr data-eixo="5" data-tema="geral">
+  <td class="num">26</td>
+  <td class="prob" data-label="Problema">Faltam calçadas e caminhos seguros no bairro Passo, perto da Unipampa, o que aumenta o risco de acidentes com pedestres, ciclistas e motoristas.</td>
+  <td class="ev" data-label="Evidência">
+    <p><span class="tag p">Planilha</span>Diagnóstico por observação do dia a dia de quem circula na região.</p>
+    <p><span class="tag v">A validar</span>Contagem de pedestres e ciclistas em horários de pico e registros de acidentes na região.</p>
+  </td>
+  <td class="quem" data-label="Quem é afetado">Estudantes, moradores e trabalhadores do bairro Passo.</td>
+</tr>
+
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <footer>
+    <h2>Como usar esta lista na maratona</h2>
+    <ul>
+      <li>O critério <em>Validação do Problema</em> vale 15% e pede evidências reais, com dados e entrevistas. As linhas marcadas como <em>A validar</em> indicam por onde começar.</li>
+      <li>Cada equipe deve escolher um público bem específico dentro do problema para não competir pela mesma ideia com as outras.</li>
+      <li>A planilha original tem respostas de opinião e, em geral, sem números. Confira se há mais linhas do que as lidas aqui.</li>
+    </ul>
+    <h2>Fontes externas</h2>
+    <ul>
+      <li><a href="https://www.gov.br/fnde/pt-br/assuntos/noticias/lei-amplia-compra-da-agricultura-familiar-para-o-pnae" target="_blank" rel="noopener">FNDE: Lei nº 15.226/2025 amplia para 45% a compra da agricultura familiar no PNAE</a></li>
+      <li><a href="https://www.fgm-go.org.br/Imprensa/Noticias/Lei-amplia-para-45-a-obrigatoriedade-de-compras-da-agricultura-familiar-no-pnae-467/" target="_blank" rel="noopener">Federação Goiana de Municípios: dados do FNDE sobre municípios que não atingiram 30% em 2022</a></li>
+      <li><a href="https://www.gov.br/fnde/pt-br/acesso-a-informacao/acoes-e-programas/programas/pnae/agricultura-familiar-no-pnae" target="_blank" rel="noopener">FNDE: perguntas frequentes sobre agricultura familiar no PNAE</a></li>
+      <li><a href="https://www.ipea.gov.br/portal/categorias/45-todas-as-noticias/noticias/15569-compras-publicas-aumentam-a-renda-de-agricultores-familiares-em-ate-106" target="_blank" rel="noopener">Ipea: compras públicas aumentam a renda de agricultores familiares</a></li>
+      <li><a href="https://www.fetagrs.org.br/?page_id=45" target="_blank" rel="noopener">FETAG-RS: agricultura familiar no Censo Agropecuário 2017</a></li>
+    </ul>
+    <p>Regulamento e planilha de origem: 2º Ideathon São Borja 2026 e formulário "Agenda 2040: construção de propostas para o futuro de São Borja".</p>
+  </footer>
+</main>
+
+<script>
+(function () {
+  var chips = document.querySelectorAll('.chip');
+  var rows = document.querySelectorAll('tbody tr');
+  var groups = document.querySelectorAll('section.group');
+  var count = document.getElementById('count');
+
+  function apply(filter) {
+    var shown = 0;
+    rows.forEach(function (r) {
+      var ok = filter === 'todos' ||
+               r.dataset.eixo === filter;
+      r.classList.toggle('hidden', !ok);
+      if (ok) shown++;
+    });
+    groups.forEach(function (g) {
+      var visible = g.querySelectorAll('tbody tr:not(.hidden)').length;
+      g.classList.toggle('empty', visible === 0);
+    });
+    count.textContent = shown + (shown === 1 ? ' problema' : ' problemas');
+  }
+
+  chips.forEach(function (c) {
+    c.addEventListener('click', function () {
+      chips.forEach(function (o) { o.setAttribute('aria-pressed', 'false'); });
+      c.setAttribute('aria-pressed', 'true');
+      apply(c.dataset.filter);
+    });
+  });
+
+  apply('todos');
+})();
+</script>
+</body>
+</html>
