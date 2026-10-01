@@ -2,6 +2,8 @@
 <html lang="pt-BR">
 <head>
 <meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; script-src 'none'; connect-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'">
+<meta name="referrer" content="no-referrer">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Banco de problemas por eixo · 2º Ideathon São Borja 2026</title>
 <style>
@@ -59,7 +61,7 @@ h1 { font-family: "Trebuchet MS", "Segoe UI", system-ui, -apple-system, sans-ser
 .controls { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; background: var(--bg); border-bottom: 1px solid var(--line); padding: 12px 0; }
 .controls .wrap { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
 .chip { font: inherit; font-size: 0.9rem; font-weight: 500; padding: 7px 13px; border-radius: 999px; border: 1.5px solid var(--line); background: var(--surface); color: var(--ink); cursor: pointer; }
-.chip[aria-pressed="true"] { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+
 .chip .sw { display: inline-block; width: 9px; height: 9px; border-radius: 50%; margin-right: 7px; }
 .count { margin-left: auto; color: var(--muted); font-size: 0.9rem; }
 
@@ -120,6 +122,26 @@ footer li { margin-bottom: 4px; }
   .table-scroll { overflow: visible; }
   table { min-width: 0; }
 }
+
+/* Filtros nativos: não requerem JavaScript nem acesso à rede. */
+.filter-input { position: absolute; width: 1px; height: 1px; clip-path: inset(50%); overflow: hidden; }
+#filtro-todos:checked ~ .controls label[for="filtro-todos"] { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+#filtro-todos:focus-visible ~ .controls label[for="filtro-todos"] { outline: 3px solid var(--focus); outline-offset: 2px; }
+#filtro-1:checked ~ .controls label[for="filtro-1"] { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+#filtro-1:focus-visible ~ .controls label[for="filtro-1"] { outline: 3px solid var(--focus); outline-offset: 2px; }
+#filtro-1:checked ~ main section.group:not([data-eixo="1"]) { display: none; }
+#filtro-2:checked ~ .controls label[for="filtro-2"] { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+#filtro-2:focus-visible ~ .controls label[for="filtro-2"] { outline: 3px solid var(--focus); outline-offset: 2px; }
+#filtro-2:checked ~ main section.group:not([data-eixo="2"]) { display: none; }
+#filtro-3:checked ~ .controls label[for="filtro-3"] { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+#filtro-3:focus-visible ~ .controls label[for="filtro-3"] { outline: 3px solid var(--focus); outline-offset: 2px; }
+#filtro-3:checked ~ main section.group:not([data-eixo="3"]) { display: none; }
+#filtro-4:checked ~ .controls label[for="filtro-4"] { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+#filtro-4:focus-visible ~ .controls label[for="filtro-4"] { outline: 3px solid var(--focus); outline-offset: 2px; }
+#filtro-4:checked ~ main section.group:not([data-eixo="4"]) { display: none; }
+#filtro-5:checked ~ .controls label[for="filtro-5"] { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+#filtro-5:focus-visible ~ .controls label[for="filtro-5"] { outline: 3px solid var(--focus); outline-offset: 2px; }
+#filtro-5:checked ~ main section.group:not([data-eixo="5"]) { display: none; }
 </style>
 </head>
 <body>
@@ -132,15 +154,21 @@ footer li { margin-bottom: 4px; }
   </div>
 </header>
 
+<input class="filter-input" type="radio" name="eixo" id="filtro-todos" checked>
+<input class="filter-input" type="radio" name="eixo" id="filtro-1">
+<input class="filter-input" type="radio" name="eixo" id="filtro-2">
+<input class="filter-input" type="radio" name="eixo" id="filtro-3">
+<input class="filter-input" type="radio" name="eixo" id="filtro-4">
+<input class="filter-input" type="radio" name="eixo" id="filtro-5">
 <nav class="controls" aria-label="Filtros">
   <div class="wrap">
-    <button class="chip" type="button" data-filter="todos" aria-pressed="true">Todos</button>
-    <button class="chip" type="button" data-filter="1" aria-pressed="false"><span class="sw" style="background:var(--e1)"></span>Eixo 1</button>
-    <button class="chip" type="button" data-filter="2" aria-pressed="false"><span class="sw" style="background:var(--e2)"></span>Eixo 2</button>
-    <button class="chip" type="button" data-filter="3" aria-pressed="false"><span class="sw" style="background:var(--e3)"></span>Eixo 3</button>
-    <button class="chip" type="button" data-filter="4" aria-pressed="false"><span class="sw" style="background:var(--e4)"></span>Eixo 4</button>
-    <button class="chip" type="button" data-filter="5" aria-pressed="false"><span class="sw" style="background:var(--e5)"></span>Eixo 5</button>
-    <span class="count" id="count" role="status" aria-live="polite"></span>
+    <label class="chip" for="filtro-todos">Todos</label>
+    <label class="chip" for="filtro-1"><span class="sw" style="background:var(--e1)"></span>Eixo 1</label>
+    <label class="chip" for="filtro-2"><span class="sw" style="background:var(--e2)"></span>Eixo 2</label>
+    <label class="chip" for="filtro-3"><span class="sw" style="background:var(--e3)"></span>Eixo 3</label>
+    <label class="chip" for="filtro-4"><span class="sw" style="background:var(--e4)"></span>Eixo 4</label>
+    <label class="chip" for="filtro-5"><span class="sw" style="background:var(--e5)"></span>Eixo 5</label>
+    <span class="count">26 problemas · 5 eixos</span>
   </div>
 </nav>
 
@@ -462,48 +490,16 @@ footer li { margin-bottom: 4px; }
     </ul>
     <h2>Fontes externas</h2>
     <ul>
-      <li><a href="https://www.gov.br/fnde/pt-br/assuntos/noticias/lei-amplia-compra-da-agricultura-familiar-para-o-pnae" target="_blank" rel="noopener">FNDE: Lei nº 15.226/2025 amplia para 45% a compra da agricultura familiar no PNAE</a></li>
-      <li><a href="https://www.fgm-go.org.br/Imprensa/Noticias/Lei-amplia-para-45-a-obrigatoriedade-de-compras-da-agricultura-familiar-no-pnae-467/" target="_blank" rel="noopener">Federação Goiana de Municípios: dados do FNDE sobre municípios que não atingiram 30% em 2022</a></li>
-      <li><a href="https://www.gov.br/fnde/pt-br/acesso-a-informacao/acoes-e-programas/programas/pnae/agricultura-familiar-no-pnae" target="_blank" rel="noopener">FNDE: perguntas frequentes sobre agricultura familiar no PNAE</a></li>
-      <li><a href="https://www.ipea.gov.br/portal/categorias/45-todas-as-noticias/noticias/15569-compras-publicas-aumentam-a-renda-de-agricultores-familiares-em-ate-106" target="_blank" rel="noopener">Ipea: compras públicas aumentam a renda de agricultores familiares</a></li>
-      <li><a href="https://www.fetagrs.org.br/?page_id=45" target="_blank" rel="noopener">FETAG-RS: agricultura familiar no Censo Agropecuário 2017</a></li>
+      <li><a href="https://www.gov.br/fnde/pt-br/assuntos/noticias/lei-amplia-compra-da-agricultura-familiar-para-o-pnae" target="_blank" rel="noopener noreferrer">FNDE: Lei nº 15.226/2025 amplia para 45% a compra da agricultura familiar no PNAE</a></li>
+      <li><a href="https://www.fgm-go.org.br/Imprensa/Noticias/Lei-amplia-para-45-a-obrigatoriedade-de-compras-da-agricultura-familiar-no-pnae-467/" target="_blank" rel="noopener noreferrer">Federação Goiana de Municípios: dados do FNDE sobre municípios que não atingiram 30% em 2022</a></li>
+      <li><a href="https://www.gov.br/fnde/pt-br/acesso-a-informacao/acoes-e-programas/programas/pnae/agricultura-familiar-no-pnae" target="_blank" rel="noopener noreferrer">FNDE: perguntas frequentes sobre agricultura familiar no PNAE</a></li>
+      <li><a href="https://www.ipea.gov.br/portal/categorias/45-todas-as-noticias/noticias/15569-compras-publicas-aumentam-a-renda-de-agricultores-familiares-em-ate-106" target="_blank" rel="noopener noreferrer">Ipea: compras públicas aumentam a renda de agricultores familiares</a></li>
+      <li><a href="https://www.fetagrs.org.br/?page_id=45" target="_blank" rel="noopener noreferrer">FETAG-RS: agricultura familiar no Censo Agropecuário 2017</a></li>
     </ul>
     <p>Regulamento e planilha de origem: 2º Ideathon São Borja 2026 e formulário "Agenda 2040: construção de propostas para o futuro de São Borja".</p>
   </footer>
 </main>
 
-<script>
-(function () {
-  var chips = document.querySelectorAll('.chip');
-  var rows = document.querySelectorAll('tbody tr');
-  var groups = document.querySelectorAll('section.group');
-  var count = document.getElementById('count');
 
-  function apply(filter) {
-    var shown = 0;
-    rows.forEach(function (r) {
-      var ok = filter === 'todos' ||
-               r.dataset.eixo === filter;
-      r.classList.toggle('hidden', !ok);
-      if (ok) shown++;
-    });
-    groups.forEach(function (g) {
-      var visible = g.querySelectorAll('tbody tr:not(.hidden)').length;
-      g.classList.toggle('empty', visible === 0);
-    });
-    count.textContent = shown + (shown === 1 ? ' problema' : ' problemas');
-  }
-
-  chips.forEach(function (c) {
-    c.addEventListener('click', function () {
-      chips.forEach(function (o) { o.setAttribute('aria-pressed', 'false'); });
-      c.setAttribute('aria-pressed', 'true');
-      apply(c.dataset.filter);
-    });
-  });
-
-  apply('todos');
-})();
-</script>
 </body>
 </html>
